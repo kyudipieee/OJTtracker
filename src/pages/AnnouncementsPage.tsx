@@ -66,7 +66,11 @@ const AnnouncementsPage = () => {
       const result = await db.createAnnouncement({
         title: formData.get("title") as string,
         content: formData.get("content") as string,
-        priority: formData.get("priority") as string,
+        priority: formData.get("priority") as
+          | "low"
+          | "medium"
+          | "high"
+          | "urgent",
         targetRoles: [formData.get("targetRoles") as string],
         authorId: currentUser?.id || "",
         authorName: currentUser?.name || "",

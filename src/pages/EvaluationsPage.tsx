@@ -281,36 +281,10 @@ const EvaluationsPage = () => {
                 {evaluation.status}
               </Badge>
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setPreviewOpen(false)}>
-                  Close
-                </Button>
+                <Button variant="outline">Close</Button>
                 <Button className="bg-green-600 hover:bg-green-700">
                   Download
                 </Button>
-                {(actualUserRole === "coordinator" ||
-                  actualUserRole === "admin") &&
-                  selectedUser.status === "Pending" && (
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        className="border-green-500 text-green-600 hover:bg-green-50"
-                        onClick={() =>
-                          handleDocumentAction(selectedDocument.id, "approve")
-                        }
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="border-red-500 text-red-600 hover:bg-red-50"
-                        onClick={() =>
-                          handleDocumentAction(selectedDocument.id, "reject")
-                        }
-                      >
-                        Reject
-                      </Button>
-                    </div>
-                  )}
               </div>
             </div>
           </div>

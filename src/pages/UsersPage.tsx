@@ -141,12 +141,16 @@ const UsersPage = () => {
     const userData = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
-      role: formData.get("role") as string,
+      role: formData.get("role") as
+        | "student"
+        | "coordinator"
+        | "supervisor"
+        | "admin",
       phone: formData.get("phone") as string,
       company: formData.get("company") as string,
       studentId: formData.get("studentId") as string,
       department: formData.get("department") as string,
-      status: "active",
+      status: "active" as "active" | "pending_approval" | "suspended",
     };
 
     try {

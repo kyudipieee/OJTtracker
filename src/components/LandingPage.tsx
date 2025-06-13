@@ -165,6 +165,7 @@ const LandingPage = () => {
         studentId: formData.studentId,
         department: formData.department,
         message: formData.message,
+        status: "pending_approval",
       });
 
       if (dbResult.error) {

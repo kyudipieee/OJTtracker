@@ -33,6 +33,8 @@ import {
   Globe,
   Save,
   RefreshCw,
+  Upload,
+  Download,
 } from "lucide-react";
 
 const SettingsPage = () => {
