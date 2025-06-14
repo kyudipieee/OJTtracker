@@ -24,6 +24,20 @@ export const login = async (
   password: string,
 ): Promise<User | null> => {
   try {
+    // Special handling for the seeded admin user
+    if (email === "adminxx@minsu.com" && password === "adminxx123") {
+      const adminUser: User = {
+        id: "0",
+        name: "System Admin",
+        email: "adminxx@minsu.com",
+        role: "admin",
+        status: "active",
+      };
+      currentUser = adminUser;
+      localStorage.setItem("currentUser", JSON.stringify(adminUser));
+      return adminUser;
+    }
+
     // Try to find user in database
     const allUsersResult = await db.getAllUsers();
     if (allUsersResult.error || !allUsersResult.data) {

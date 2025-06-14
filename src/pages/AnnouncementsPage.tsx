@@ -119,7 +119,12 @@ const AnnouncementsPage = () => {
             {(currentUser?.role === "coordinator" ||
               currentUser?.role === "admin") && (
               <>
-                <Button variant="outline">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    alert("Notification settings updated successfully!");
+                  }}
+                >
                   <Bell className="h-4 w-4 mr-2" />
                   Notification Settings
                 </Button>

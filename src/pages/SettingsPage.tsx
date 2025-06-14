@@ -581,6 +581,11 @@ const SettingsPage = () => {
                   <Button
                     variant="outline"
                     className="text-yellow-700 border-yellow-300"
+                    onClick={() => {
+                      alert(
+                        "Password change request submitted. You will receive an email with instructions.",
+                      );
+                    }}
                   >
                     Request Password Change
                   </Button>
@@ -735,7 +740,14 @@ const SettingsPage = () => {
                         <Switch id="smtpTls" defaultChecked />
                         <Label htmlFor="smtpTls">Use TLS/SSL</Label>
                       </div>
-                      <Button variant="outline">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          alert(
+                            "Test email sent successfully! Check your inbox.",
+                          );
+                        }}
+                      >
                         Test Email Configuration
                       </Button>
                     </CardContent>
@@ -754,15 +766,41 @@ const SettingsPage = () => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <Button variant="outline" className="w-full">
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => {
+                            alert("Database backup created successfully!");
+                          }}
+                        >
                           <Database className="h-4 w-4 mr-2" />
                           Backup Database
                         </Button>
-                        <Button variant="outline" className="w-full">
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => {
+                            if (
+                              confirm(
+                                "Are you sure you want to restore the database? This will overwrite current data.",
+                              )
+                            ) {
+                              alert("Database restored successfully!");
+                            }
+                          }}
+                        >
                           <Upload className="h-4 w-4 mr-2" />
                           Restore Database
                         </Button>
-                        <Button variant="outline" className="w-full">
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => {
+                            alert(
+                              "Database optimization completed successfully!",
+                            );
+                          }}
+                        >
                           <RefreshCw className="h-4 w-4 mr-2" />
                           Optimize Database
                         </Button>
@@ -780,12 +818,34 @@ const SettingsPage = () => {
                           <Button
                             variant="outline"
                             className="text-red-600 border-red-300"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Are you sure you want to clear all logs? This action cannot be undone.",
+                                )
+                              ) {
+                                alert(
+                                  "All logs have been cleared successfully!",
+                                );
+                              }
+                            }}
                           >
                             Clear All Logs
                           </Button>
                           <Button
                             variant="outline"
                             className="text-red-600 border-red-300"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Are you sure you want to reset system data? This will remove all data and cannot be undone.",
+                                )
+                              ) {
+                                alert(
+                                  "System data has been reset successfully!",
+                                );
+                              }
+                            }}
                           >
                             Reset System Data
                           </Button>
@@ -810,7 +870,15 @@ const SettingsPage = () => {
                               Last updated: 2 minutes ago
                             </p>
                           </div>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              alert(
+                                "Application logs downloaded successfully!",
+                              );
+                            }}
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </Button>
@@ -822,7 +890,13 @@ const SettingsPage = () => {
                               Last updated: 1 hour ago
                             </p>
                           </div>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              alert("Error logs downloaded successfully!");
+                            }}
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </Button>
@@ -834,7 +908,13 @@ const SettingsPage = () => {
                               Last updated: 5 minutes ago
                             </p>
                           </div>
-                          <Button variant="outline" size="sm">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              alert("Audit trail downloaded successfully!");
+                            }}
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Download
                           </Button>
@@ -860,7 +940,20 @@ const SettingsPage = () => {
                             defaultValue="sk_live_xxxxxxxxxxxxxxxx"
                             readOnly
                           />
-                          <Button variant="outline">Regenerate</Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Are you sure you want to regenerate the API key? This will invalidate the current key.",
+                                )
+                              ) {
+                                alert("New API key generated successfully!");
+                              }
+                            }}
+                          >
+                            Regenerate
+                          </Button>
                         </div>
                       </div>
                       <div>

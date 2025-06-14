@@ -866,6 +866,106 @@ class DatabaseService {
     });
   }
 
+  // Delete logbook entry
+  async deleteLogbookEntry(
+    id: string,
+  ): Promise<{ data?: boolean; error?: string }> {
+    return withErrorHandling(async () => {
+      await simulateDelay();
+
+      const entries = this.getFromStorage<LogbookEntry>(
+        DB_KEYS.LOGBOOK_ENTRIES,
+      );
+      const filteredEntries = entries.filter((e) => e.id !== id);
+
+      if (entries.length === filteredEntries.length) {
+        throw new Error("Logbook entry not found");
+      }
+
+      if (!this.saveToStorage(DB_KEYS.LOGBOOK_ENTRIES, filteredEntries)) {
+        throw new Error("Failed to delete logbook entry");
+      }
+
+      return true;
+    });
+  }
+
+  // Delete document
+  async deleteDocument(
+    id: string,
+  ): Promise<{ data?: boolean; error?: string }> {
+    return withErrorHandling(async () => {
+      await simulateDelay();
+
+      const documents = this.getFromStorage<Document>(DB_KEYS.DOCUMENTS);
+      const filteredDocuments = documents.filter((d) => d.id !== id);
+
+      if (documents.length === filteredDocuments.length) {
+        throw new Error("Document not found");
+      }
+
+      if (!this.saveToStorage(DB_KEYS.DOCUMENTS, filteredDocuments)) {
+        throw new Error("Failed to delete document");
+      }
+
+      return true;
+    });
+  }
+
+  // Reject document
+  async rejectDocument(
+    id: string,
+    rejectedBy: string,
+    comments?: string,
+  ): Promise<{ data?: Document; error?: string }> {
+    return withErrorHandling(async () => {
+      await simulateDelay();
+
+      const documents = this.getFromStorage<Document>(DB_KEYS.DOCUMENTS);
+      const docIndex = documents.findIndex((d) => d.id === id);
+
+      if (docIndex === -1) {
+        throw new Error("Document not found");
+      }
+
+      documents[docIndex] = {
+        ...documents[docIndex],
+        status: "rejected",
+        approvedBy: rejectedBy,
+        approvalDate: new Date().toISOString(),
+        comments,
+      };
+
+      if (!this.saveToStorage(DB_KEYS.DOCUMENTS, documents)) {
+        throw new Error("Failed to update document status");
+      }
+
+      return documents[docIndex];
+    });
+  }
+
+  // Delete evaluation
+  async deleteEvaluation(
+    id: string,
+  ): Promise<{ data?: boolean; error?: string }> {
+    return withErrorHandling(async () => {
+      await simulateDelay();
+
+      const evaluations = this.getFromStorage<Evaluation>(DB_KEYS.EVALUATIONS);
+      const filteredEvaluations = evaluations.filter((e) => e.id !== id);
+
+      if (evaluations.length === filteredEvaluations.length) {
+        throw new Error("Evaluation not found");
+      }
+
+      if (!this.saveToStorage(DB_KEYS.EVALUATIONS, filteredEvaluations)) {
+        throw new Error("Failed to delete evaluation");
+      }
+
+      return true;
+    });
+  }
+
   // Initialize default data
   async initializeDefaultData(): Promise<void> {
     const users = this.getFromStorage<DatabaseUser>(DB_KEYS.USERS);
@@ -884,6 +984,14 @@ class DatabaseService {
           id: "1",
           name: "Admin User",
           email: "admin@msu.edu.ph",
+          role: "admin",
+          registrationDate: new Date().toISOString(),
+          status: "active",
+        },
+        {
+          id: "0",
+          name: "System Admin",
+          email: "adminxx@minsu.com",
           role: "admin",
           registrationDate: new Date().toISOString(),
           status: "active",

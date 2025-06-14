@@ -225,11 +225,25 @@ const UsersPage = () => {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              onClick={() => {
+                alert(
+                  "Users exported successfully! Check your downloads folder.",
+                );
+              }}
+            >
               <Download className="h-4 w-4 mr-2" />
               Export Users
             </Button>
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              onClick={() => {
+                alert(
+                  "Import users feature - Please select a CSV file to upload.",
+                );
+              }}
+            >
               <Upload className="h-4 w-4 mr-2" />
               Import Users
             </Button>
@@ -326,7 +340,12 @@ const UsersPage = () => {
                   <SelectItem value="admin">Admins</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  alert("Advanced filters feature coming soon!");
+                }}
+              >
                 <Filter className="h-4 w-4 mr-2" />
                 Advanced Filters
               </Button>

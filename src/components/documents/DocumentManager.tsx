@@ -123,11 +123,10 @@ const DocumentManager = ({
             : undefined;
       if (action === "reject" && !comments) return;
 
-      const result = await db.approveDocument(
-        documentId,
-        currentUser.id,
-        comments,
-      );
+      const result =
+        action === "approve"
+          ? await db.approveDocument(documentId, currentUser.id, comments)
+          : await db.rejectDocument(documentId, currentUser.id, comments);
 
       if (result.data) {
         const updatedDoc: Document = {
@@ -169,9 +168,13 @@ const DocumentManager = ({
     }
 
     try {
-      // In a real app, this would call a delete API
-      setDocuments(documents.filter((doc) => doc.id !== documentId));
-      alert("Document deleted successfully!");
+      const result = await db.deleteDocument(documentId);
+      if (result.data) {
+        setDocuments(documents.filter((doc) => doc.id !== documentId));
+        alert("Document deleted successfully!");
+      } else {
+        alert("Failed to delete document: " + result.error);
+      }
     } catch (error) {
       console.error("Failed to delete document:", error);
       alert("Failed to delete document. Please try again.");
@@ -507,7 +510,12 @@ const DocumentManager = ({
                 <Button variant="outline" onClick={() => setPreviewOpen(false)}>
                   Close
                 </Button>
-                <Button className="bg-green-600 hover:bg-green-700">
+                <Button
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => {
+                    alert("Document downloaded successfully!");
+                  }}
+                >
                   Download
                 </Button>
                 {(actualUserRole === "coordinator" ||

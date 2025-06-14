@@ -330,7 +330,9 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
             <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 className="flex-1 bg-green-600 hover:bg-green-700"
-                onClick={() => (window.location.href = "/logbook")}
+                onClick={() => {
+                  window.location.href = "/logbook";
+                }}
               >
                 <FileText className="h-4 w-4 mr-2" />
                 Submit New Entry
@@ -338,7 +340,9 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => (window.location.href = "/documents")}
+                onClick={() => {
+                  window.location.href = "/documents";
+                }}
               >
                 <Target className="h-4 w-4 mr-2" />
                 Upload Documents
@@ -346,7 +350,9 @@ const ProgressTracker = ({ className }: ProgressTrackerProps) => {
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => (window.location.href = "/evaluations")}
+                onClick={() => {
+                  window.location.href = "/evaluations";
+                }}
               >
                 <Award className="h-4 w-4 mr-2" />
                 View Evaluations

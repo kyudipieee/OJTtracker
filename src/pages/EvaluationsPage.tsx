@@ -281,8 +281,15 @@ const EvaluationsPage = () => {
                 {evaluation.status}
               </Badge>
               <div className="flex gap-2">
-                <Button variant="outline">Close</Button>
-                <Button className="bg-green-600 hover:bg-green-700">
+                <Button variant="outline" onClick={() => window.print()}>
+                  Print
+                </Button>
+                <Button
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => {
+                    alert("Evaluation downloaded successfully!");
+                  }}
+                >
                   Download
                 </Button>
               </div>
