@@ -24,12 +24,44 @@ export const login = async (
   password: string,
 ): Promise<User | null> => {
   try {
-    // Special handling for the seeded admin user
+    // Special handling for the hardcoded admin user - always allow access
     if (email === "adminxx@minsu.com" && password === "adminxx123") {
       const adminUser: User = {
         id: "0",
         name: "System Admin",
         email: "adminxx@minsu.com",
+        role: "admin",
+        status: "active",
+      };
+      currentUser = adminUser;
+      localStorage.setItem("currentUser", JSON.stringify(adminUser));
+
+      // Ensure the admin user exists in the database for consistency
+      try {
+        const existingAdmin = await db.getUserById("0");
+        if (existingAdmin.error) {
+          // Create the admin user in database if it doesn't exist
+          await db.createUser({
+            name: "System Admin",
+            email: "adminxx@minsu.com",
+            role: "admin",
+            status: "active",
+          });
+        }
+      } catch (dbError) {
+        console.warn("Could not sync admin user to database:", dbError);
+        // Continue anyway - admin login should work regardless of database state
+      }
+
+      return adminUser;
+    }
+
+    // For demo purposes, also allow the original admin credentials
+    if (email === "admin@msu.edu.ph" && password === "admin123") {
+      const adminUser: User = {
+        id: "1",
+        name: "Admin User",
+        email: "admin@msu.edu.ph",
         role: "admin",
         status: "active",
       };
