@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { db, type DatabaseUser } from "@/lib/database";
 import { useNavigate } from "react-router-dom";
 import {
@@ -79,6 +79,8 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const navigate = useNavigate();
   const currentUser = getCurrentUser();
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
   const handleLogout = () => {
     logout();
@@ -142,101 +144,138 @@ const AdminDashboard = () => {
   const [filterRole, setFilterRole] = useState("all");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchAdminData = async () => {
-      try {
+  const fetchAdminData = useCallback(async (showRefreshIndicator = false) => {
+    try {
+      if (showRefreshIndicator) {
+        setRefreshing(true);
+      } else {
         setLoading(true);
+      }
 
-        // Fetch system statistics
-        const statsResult = await db.getSystemStats();
-        if (statsResult.data) {
-          const stats = statsResult.data;
+      // Fetch system statistics
+      const statsResult = await db.getSystemStats();
+      if (statsResult.data) {
+        const stats = statsResult.data;
 
-          setSystemMetrics([
-            {
-              label: "Total Users",
-              value: stats.totalUsers,
-              icon: <Users className="h-6 w-6" />,
-              trend: "+12%",
-              color: "bg-blue-600",
-            },
-            {
-              label: "Active Students",
-              value: stats.activeStudents,
-              icon: <Activity className="h-6 w-6" />,
-              trend: "+8%",
-              color: "bg-green-600",
-            },
-            {
-              label: "Pending Documents",
-              value: stats.pendingDocuments,
-              icon: <Database className="h-6 w-6" />,
-              trend: "-5%",
-              color: "bg-yellow-600",
-            },
-            {
-              label: "Logbook Entries",
-              value: stats.totalLogbookEntries,
-              icon: <CheckCircle className="h-6 w-6" />,
-              trend: "+15%",
-              color: "bg-purple-600",
-            },
-          ]);
+        setSystemMetrics([
+          {
+            label: "Total Users",
+            value: stats.totalUsers,
+            icon: <Users className="h-6 w-6" />,
+            trend: "+12%",
+            color: "bg-blue-600",
+          },
+          {
+            label: "Active Students",
+            value: stats.activeStudents,
+            icon: <Activity className="h-6 w-6" />,
+            trend: "+8%",
+            color: "bg-green-600",
+          },
+          {
+            label: "Pending Documents",
+            value: stats.pendingDocuments,
+            icon: <Database className="h-6 w-6" />,
+            trend: "-5%",
+            color: "bg-yellow-600",
+          },
+          {
+            label: "Logbook Entries",
+            value: stats.totalLogbookEntries,
+            icon: <CheckCircle className="h-6 w-6" />,
+            trend: "+15%",
+            color: "bg-purple-600",
+          },
+        ]);
 
-          setUserStats({
-            students: stats.activeStudents,
-            coordinators: stats.totalCoordinators,
-            supervisors: stats.totalSupervisors,
-            admins: 1, // Based on default data
-          });
+        setUserStats({
+          students: stats.activeStudents,
+          coordinators: stats.totalCoordinators,
+          supervisors: stats.totalSupervisors,
+          admins: 1, // Based on default data
+        });
 
-          // Generate recent activities based on data
-          const activities = [
-            {
-              id: 1,
-              action: `${stats.registrationsThisMonth} new registrations this month`,
-              user: "System",
-              timestamp: "This month",
-              type: "user",
-            },
-            {
-              id: 2,
-              action: `${stats.pendingDocuments} documents pending review`,
-              user: "System",
-              timestamp: "Current",
-              type: "document",
-            },
-            {
-              id: 3,
-              action: `${stats.completedEvaluations} evaluations completed`,
-              user: "System",
-              timestamp: "Total",
-              type: "evaluation",
-            },
-          ];
-          setRecentActivities(activities);
-        }
+        // Generate recent activities based on data
+        const activities = [
+          {
+            id: 1,
+            action: `${stats.registrationsThisMonth} new registrations this month`,
+            user: "System",
+            timestamp: "This month",
+            type: "user",
+          },
+          {
+            id: 2,
+            action: `${stats.pendingDocuments} documents pending review`,
+            user: "System",
+            timestamp: "Current",
+            type: "document",
+          },
+          {
+            id: 3,
+            action: `${stats.completedEvaluations} evaluations completed`,
+            user: "System",
+            timestamp: "Total",
+            type: "evaluation",
+          },
+        ];
+        setRecentActivities(activities);
+      }
 
-        // Fetch all users
-        const usersResult = await db.getAllUsers();
-        if (usersResult.data) {
-          setUsers(usersResult.data);
-        }
+      // Fetch all users
+      const usersResult = await db.getAllUsers();
+      if (usersResult.data) {
+        setUsers(usersResult.data);
+      }
 
-        // Fetch announcements
-        const announcementsResult = await db.getAnnouncements();
-        if (announcementsResult.data) {
-          setAnnouncements(announcementsResult.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch admin data:", error);
-      } finally {
-        setLoading(false);
+      // Fetch announcements
+      const announcementsResult = await db.getAnnouncements();
+      if (announcementsResult.data) {
+        setAnnouncements(announcementsResult.data);
+      }
+
+      if (showRefreshIndicator) {
+        setLastRefresh(new Date());
+      }
+    } catch (error) {
+      console.error("Failed to fetch admin data:", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAdminData();
+  }, [fetchAdminData]);
+
+  // Auto-refresh data every 30 seconds when tab is active
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchAdminData(true);
       }
     };
 
-    fetchAdminData();
-  }, []);
+    const interval = setInterval(() => {
+      if (!document.hidden) {
+        fetchAdminData(true);
+      }
+    }, 30000); // Refresh every 30 seconds
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleVisibilityChange);
+    };
+  }, [fetchAdminData]);
+
+  const handleManualRefresh = () => {
+    fetchAdminData(true);
+  };
 
   const handleUserAction = async (action: string, user?: DatabaseUser) => {
     if (action === "create") {
@@ -442,6 +481,25 @@ const AdminDashboard = () => {
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold">System Administration</h1>
             <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                {lastRefresh && (
+                  <span className="text-xs text-gray-500">
+                    Last updated: {lastRefresh.toLocaleTimeString()}
+                  </span>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleManualRefresh}
+                  disabled={refreshing}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw
+                    className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+                  />
+                  {refreshing ? "Refreshing..." : "Refresh"}
+                </Button>
+              </div>
               <Badge className="bg-green-600">Admin Access</Badge>
               <Button variant="ghost" size="icon">
                 <Bell className="h-5 w-5" />

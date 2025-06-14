@@ -790,13 +790,13 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
       {actualUserRole === "coordinator" && (
         <div className="mb-6">
-          <LogbookReview />
+          <LogbookReview className="" />
         </div>
       )}
 
       {actualUserRole === "supervisor" && (
         <div className="mb-6">
-          <StudentEvaluationForm />
+          <StudentEvaluationForm className="" />
         </div>
       )}
 
